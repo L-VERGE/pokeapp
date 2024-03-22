@@ -33,6 +33,7 @@ import kotlin.random.Random
 
 @Composable
 fun MainScreen() {
+    // Creating set of strings for testing purposes, each displays pokemon's name in info box
     val my_elements: Set<String> = setOf("Bulbasaur","Ivysaur","Venusaur",
         "Charmander","Charmeleon","Charizard",
         "Squirtle","Wartortle","Blastoise",
@@ -41,14 +42,15 @@ fun MainScreen() {
         "Pidgey","Pidgeotto","Pidgeot",
         "Rattata","Raticate")
 
-    Column {
-        TopBox()
-        LazyColumn(
+    Column {// Column to divide page vertically
+        TopBox() // Create the top box as first section on the screen
+        LazyColumn( // Lazy column to create a scrollable list of elements
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .padding(vertical = 0.dp)
         ) {
+            // Then create a 'PokemonListElement' for each thing in the testing set
             items(my_elements.toList()) { element ->
                 PokemonListElement(text = element)
             }
@@ -57,22 +59,23 @@ fun MainScreen() {
 }
 
 @Composable
-fun TopBox() {
-    Box(
+fun TopBox() { // Box in the top section of the screen that includes search and menu
+    Box( // Grey background box to contain everything
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.20f)
             .background(Color(android.graphics.Color.parseColor("#C2C2C2")))
     ) {
-        Row(
+        Row( // Row in order to have menu icon and search bar side-by-side
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
                 .align(Alignment.Center),
             horizontalArrangement = Arrangement.SpaceBetween,
         ){
+            // First the hamburger menu, button so it's clickable
             IconButton(onClick = { /* Handle hamburger menu click */ }) {
-                Icon(
+                Icon( // Icon for the menu
                     imageVector = Icons.Default.Menu,
                     tint = Color(android.graphics.Color.parseColor("#FFFFFF")),
                     contentDescription = "Menu",
@@ -80,35 +83,34 @@ fun TopBox() {
                         .size(64.dp)
                 )
             }
-            Spacer(
+            Spacer( // Spacer to have small gap between menu and search bar
                 modifier = Modifier
                     .width(32.dp)
             )
-            SearchBar()
+            SearchBar() // Search bar, not functional atm but it's there
         }
     }
 }
 
 @Composable
-fun SearchBar() {
-    Box(
+fun SearchBar() { // The search bar to let users search specific pokemon
+    Box( // Keep everything in a rounded white box to look fancy
         modifier = Modifier
             .height(48.dp)
             .background(Color.White, RoundedCornerShape(24.dp))
             .padding(horizontal = 16.dp),
         contentAlignment = Alignment.CenterStart
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            // Search icon
-            Icon(
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {// Row to have icon next to the search
+            Icon( // Search icon
                 imageVector = Icons.Default.Search,
                 tint = Color(android.graphics.Color.parseColor("#C2C2C2")),
                 contentDescription = "Search",
                 modifier = Modifier.padding(end = 8.dp)
             )
-
-            // TextField for search input
-            TextField(
+            TextField( // Search input
                 value = "",
                 onValueChange = { },
                 placeholder = { Text("Search...") },
@@ -120,7 +122,7 @@ fun SearchBar() {
 
 
 @Composable
-fun PokemonListElement( // Box containing Pokemon information
+fun PokemonListElement( // Element inside scrolling list that contains Pokemon info
     text: String
 ) {
     val backgroundColour = generateRandomColor() // Random background colour for testing
@@ -142,7 +144,7 @@ fun PokemonListElement( // Box containing Pokemon information
     }
 }
 @Composable
-fun PokemonInfoBox(
+fun PokemonInfoBox( // Box that actually displays Pokemon info
     modifier: Modifier = Modifier,
     backgroundColour: Color = Color.Gray,
     text: String = ""
@@ -160,7 +162,7 @@ fun PokemonInfoBox(
     }
 }
 @Composable
-fun PokemonInfoTriangle(
+fun PokemonInfoTriangle( // Triangle connected to info box (completely aesthetic)
     modifier: Modifier = Modifier,
     backgroundColour: Color = Color.Gray
 ) {
@@ -179,8 +181,9 @@ fun PokemonInfoTriangle(
     }
 }
 
+// Helper methods
 
-fun generateRandomColor(): Color {
+fun generateRandomColor(): Color { // Generate a random colour for testing purposes
     val random = Random.Default
     return Color(random.nextFloat(), random.nextFloat(), random.nextFloat())
 }

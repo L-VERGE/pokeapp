@@ -2,6 +2,7 @@ package com.example.pokeapp.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,10 +30,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import kotlin.random.Random
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    navController: NavHostController // Take in navController to use when swapping screens
+) {
     // Creating set of strings for testing purposes, each displays pokemon's name in info box
     val my_elements: Set<String> = setOf("Bulbasaur","Ivysaur","Venusaur",
         "Charmander","Charmeleon","Charizard",
@@ -52,7 +56,10 @@ fun MainScreen() {
         ) {
             // Then create a 'PokemonListElement' for each thing in the testing set
             items(my_elements.toList()) { element ->
-                PokemonListElement(text = element)
+                PokemonListElement(
+                    text = element, // Passing in pokemon name
+                    navController = navController // Passing in navController to swap screens on info box click
+                )
             }
         }
     }
@@ -123,7 +130,8 @@ fun SearchBar() { // The search bar to let users search specific pokemon
 
 @Composable
 fun PokemonListElement( // Element inside scrolling list that contains Pokemon info
-    text: String
+    text: String,
+    navController: NavHostController // Taking in navController to swap screens on info box click
 ) {
     val backgroundColour = generateRandomColor() // Random background colour for testing
     Row(
@@ -135,7 +143,8 @@ fun PokemonListElement( // Element inside scrolling list that contains Pokemon i
         PokemonInfoBox(
             modifier = Modifier.weight(.8f),
             backgroundColour = backgroundColour,
-            text = text
+            text = text,
+            navController = navController // Passing in navController to swap screens on info box click
         )
         PokemonInfoTriangle(
             modifier = Modifier.weight(.2f),
@@ -147,12 +156,20 @@ fun PokemonListElement( // Element inside scrolling list that contains Pokemon i
 fun PokemonInfoBox( // Box that actually displays Pokemon info
     modifier: Modifier = Modifier,
     backgroundColour: Color = Color.Gray,
-    text: String = ""
+    text: String = "",
+    navController: NavHostController // Taking in navController to swap screens on info box click
 ) {
+    // This box should:
+    //- Display the pokemon's name
+    //- Display the pokemon's dex number
+    //- Display a png of the pokemon
+    //- Display the pokemon's types
+    //- Backing colour set to be a lighter shade of primary type's colour
     Box(
         modifier = modifier
             .fillMaxHeight()
             .background(backgroundColour)
+            .clickable { navController.navigate(MainDestinations.INDIVIDUAL_VIEW_SCREEN) } // Swaps to individual view screen when clicked
     ){
         Text(
             text = text,

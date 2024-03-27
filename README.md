@@ -1,6 +1,6 @@
 # Pokéapp (name not final)
-Thomas Kowalczyk - W0471712
-Logan Verge - W0463129
+Thomas Kowalczyk - W0471712\
+Logan Verge - W0463129\
 Peter MacKinnon - W0412692
 ## What is this app?
 This Android app is our group project for the MOBI3002 class.

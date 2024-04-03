@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.pokeapp.ui.NavGraph
+import com.example.pokeapp.ui.PokeNavGraph
 import com.example.pokeapp.ui.theme.PokeappTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +20,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavGraph() // Uses NavGraph in order to start on MainScreen and jump between screens on box click
+                    PokeNavGraph() // Uses NavGraph in order to start on MainScreen and jump between screens on box click
+                    //EvoScreen()
                 }
             }
         }

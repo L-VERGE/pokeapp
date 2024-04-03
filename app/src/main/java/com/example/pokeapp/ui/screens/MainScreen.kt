@@ -1,4 +1,4 @@
-package com.example.pokeapp.ui
+package com.example.pokeapp.ui.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.pokeapp.ui.MainDestinations
 import kotlin.random.Random
 
 @Composable

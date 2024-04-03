@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.pokeapp.ui.screens.IndividualViewScreen
+import com.example.pokeapp.ui.screens.MainScreen
 
 object MainDestinations { // Object to store different screens as properties
     const val MAIN_SCREEN = "main_screen"
@@ -12,7 +14,7 @@ object MainDestinations { // Object to store different screens as properties
 
 // NavGraph exists to let us jump between different screens in the app
 @Composable
-fun NavGraph() {
+fun PokeNavGraph() {
     val navController = rememberNavController()
 
     NavHost(

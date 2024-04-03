@@ -67,6 +67,15 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation ("io.coil-kt:coil-compose:1.4.0")
+
+    // Coil
+    implementation ("io.coil-kt:coil-compose:2.4.0")
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // Retrofit with Scalar Converter
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    // Retrofit with Kotlin serialization Converter
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
 }

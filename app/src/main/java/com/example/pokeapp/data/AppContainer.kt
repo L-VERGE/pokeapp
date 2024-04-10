@@ -1,5 +1,4 @@
 package com.example.pokeapp.data
-
 import com.example.pokeapp.network.PokeApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -9,6 +8,7 @@ import retrofit2.Retrofit
 interface AppContainer {
     val pokemonRepository: PokemonRepository
 }
+
 class DefaultAppContainer : AppContainer {
     private val baseUrl = "https://pokeapi.co/api/v2/pokemon/"
 

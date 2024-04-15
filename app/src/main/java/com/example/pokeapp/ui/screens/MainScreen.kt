@@ -36,6 +36,9 @@ import kotlin.random.Random
 
 @Composable
 fun MainScreen(
+    pokeUiState: PokemonUiState,
+    retryAction: () -> Unit,
+    modifier: Modifier = Modifier,
     navController: NavHostController // Take in navController to use when swapping screens
 ) {
     // Creating set of strings for testing purposes, each displays pokemon's name in info box

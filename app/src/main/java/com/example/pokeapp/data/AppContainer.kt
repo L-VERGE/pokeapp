@@ -10,7 +10,7 @@ interface AppContainer {
 }
 
 class DefaultAppContainer : AppContainer {
-    private val baseUrl = "https://pokeapi.co/api/v2/pokemon/"
+    private val baseUrl = "https://pokeapi.co/api/v2/"
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
@@ -21,10 +21,9 @@ class DefaultAppContainer : AppContainer {
         retrofit.create(PokeApiService::class.java)
     }
 
-    /**
-     * DI implementation for Mars photos repository
-     */
     override val pokemonRepository: PokemonRepository by lazy {
         NetworkPokemonRepository(retrofitService)
     }
+
+
 }

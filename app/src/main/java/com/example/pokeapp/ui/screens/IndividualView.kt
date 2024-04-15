@@ -13,7 +13,10 @@ import androidx.navigation.NavHostController
 // Simple placeholder for the individual view
 @Composable
 fun IndividualViewScreen(
-    navController: NavHostController // Take in navController to use when swapping screens
+    pokeUiState: PokemonUiState,
+    retryAction: () -> Unit,
+    modifier: Modifier = Modifier,
+    navController: NavHostController, // Take in navController to use when swapping screens
 ) {
     Surface( // Green page background for testing
         color = Color.Green

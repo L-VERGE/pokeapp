@@ -37,7 +37,7 @@ class PokemonViewModel(
         viewModelScope.launch {
             pokemonUiState = PokemonUiState.Loading
             pokemonUiState = try {
-                PokemonUiState.Success(pokemonRepository.getPokemon())
+                PokemonUiState.Success(pokemonRepository.fetchAllPokemon())
             } catch (e: IOException) {
                 PokemonUiState.Error
             } catch (e: HttpException) {

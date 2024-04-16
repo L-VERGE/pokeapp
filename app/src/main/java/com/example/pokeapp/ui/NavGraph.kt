@@ -29,7 +29,8 @@ fun PokeNavGraph(
         startDestination = MainDestinations.MAIN_SCREEN // Tells NavGraph to start on main screen
     ) {
         composable(MainDestinations.MAIN_SCREEN) {
-            MainScreen(pokeUiState, retryAction, navController = navController) // Navigate to the main screen, storing which screen clicks should send you to
+            MainScreen(pokeUiState, retryAction,navController = navController) // Navigate to the main screen, storing which screen clicks should send you to
+            //pokeUiState, retryAction,
         }
         composable(MainDestinations.INDIVIDUAL_VIEW_SCREEN) {
             IndividualViewScreen(pokeUiState, retryAction, navController = navController) // Navigate to the individual screen, storing which screen clicks should send you to

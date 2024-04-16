@@ -1,9 +1,8 @@
 package com.example.pokeapp.data
-import com.example.pokeapp.network.PokeApiService
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.example.pokeapp.network.ApiService
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 interface AppContainer {
     val pokemonRepository: PokemonRepository
@@ -12,14 +11,20 @@ interface AppContainer {
 class DefaultAppContainer : AppContainer {
     private val baseUrl = "https://pokeapi.co/api/v2/"
 
+    private val json = Json { ignoreUnknownKeys = true }
+
     private val retrofit: Retrofit = Retrofit.Builder()
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        //.addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(GsonConverterFactory.create())
         .baseUrl(baseUrl)
         .build()
 
-    private val retrofitService: PokeApiService by lazy {
-        retrofit.create(PokeApiService::class.java)
+    private val retrofitService: ApiService by lazy {
+        retrofit.create(ApiService::class.java)
     }
+//    private val retrofitService: PokeApiService by lazy {
+//        retrofit.create(PokeApiService::class.java)
+//    }
 
     override val pokemonRepository: PokemonRepository by lazy {
         NetworkPokemonRepository(retrofitService)

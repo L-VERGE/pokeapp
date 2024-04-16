@@ -1,5 +1,4 @@
 package com.example.pokeapp.ui.screens
-
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,14 +15,12 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-
 /* Main Screen UI State */
 sealed interface PokemonUiState {
     data class Success(val pokemon: List<Pokemon>) : PokemonUiState
     object Error : PokemonUiState
     object Loading : PokemonUiState
 }
-
 class PokemonViewModel(
     private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
@@ -32,12 +29,11 @@ class PokemonViewModel(
     init {
         getPokemon()
     }
-
     fun getPokemon() {
         viewModelScope.launch {
             pokemonUiState = PokemonUiState.Loading
             pokemonUiState = try {
-                PokemonUiState.Success(pokemonRepository.fetchAllPokemon())
+                PokemonUiState.Success(pokemonRepository.getAllPokemon())
             } catch (e: IOException) {
                 PokemonUiState.Error
             } catch (e: HttpException) {
@@ -45,7 +41,6 @@ class PokemonViewModel(
             }
         }
     }
-
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

@@ -17,6 +17,9 @@ fun PokeApp() {
         PokeNavGraph(
             pokeUiState = pokeViewModel.pokemonUiState,
             retryAction = pokeViewModel::getPokemon
+
+            //pokeUiState = pokeViewModel.pokemonUiState,
+            //retryAction = pokeViewModel::getPokemonList
         )
 
     }

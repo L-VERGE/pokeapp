@@ -1,26 +1,44 @@
 package com.example.pokeapp.model
 
-//@Serializable
-//data class Pokemon(
-//    val name: String,
-//    @SerialName(value = "img_src")
-//    val imgSrc: String
-//)
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Pokemon(
-    val id: Int,
-    val name: String,
-    val types: List<String>,
-    val abilities: List<String>,
-    val baseHealth: Int,
-    val baseSpeed: Int,
-    val baseAttack: Int,
-    val baseDefense: Int,
-    val baseSpecialAttack: Int,
-    val baseSpecialDefense: Int,
-    val moves: List<String>,
-    val officialArtworkUrl: String
+    @SerializedName("name")@Expose val name: String,
+    @SerializedName("url")@Expose val url: String
 )
 
-// Later improve by making classes for abilities and moves
-// Then store lists of ability and move objects in pokemon
+
+//@Serializable
+//data class Pokemon(
+//    val id: Int,
+//    val name: String,
+////    val types: List<Type>,
+////    val abilities: List<Ability>,
+////    val stats: List<Stat>,
+////    val moves: List<Move>,
+//    val sprites: Sprites
+//) {
+////    val baseHealth: Int
+////        get() = stats.find { it.stat.name == "hp" }?.baseStat ?: 0
+////
+////    val baseSpeed: Int
+////        get() = stats.find { it.stat.name == "speed" }?.baseStat ?: 0
+////
+////    val baseAttack: Int
+////        get() = stats.find { it.stat.name == "attack" }?.baseStat ?: 0
+////
+////    val baseDefense: Int
+////        get() = stats.find { it.stat.name == "defense" }?.baseStat ?: 0
+////
+////    val baseSpecialAttack: Int
+////        get() = stats.find { it.stat.name == "special-attack" }?.baseStat ?: 0
+////
+////    val baseSpecialDefense: Int
+////        get() = stats.find { it.stat.name == "special-defense" }?.baseStat ?: 0
+////
+////    val officialArtworkUrl: String
+////        get() = sprites.other.officialArtwork.frontDefault
+//}

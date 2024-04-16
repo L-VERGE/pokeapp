@@ -71,36 +71,3 @@ fun IndividualViewHeading(
         )
 }
 
-
-//fun TopBox() { // Box in the top section of the screen that includes search and menu
-//    Box( // Grey background box to contain everything
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .fillMaxHeight(0.20f)
-//            .background(Color(android.graphics.Color.parseColor("#C2C2C2")))
-//    ) {
-//        Row( // Row in order to have menu icon and search bar side-by-side
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(10.dp)
-//                .align(Alignment.Center),
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//        ){
-//            // First the hamburger menu, button so it's clickable
-//            IconButton(onClick = { /* Handle hamburger menu click */ }) {
-//                Icon( // Icon for the menu
-//                    imageVector = Icons.Default.Menu,
-//                    tint = Color(android.graphics.Color.parseColor("#FFFFFF")),
-//                    contentDescription = "Menu",
-//                    modifier = Modifier
-//                        .size(64.dp)
-//                )
-//            }
-//            Spacer( // Spacer to have small gap between menu and search bar
-//                modifier = Modifier
-//                    .width(32.dp)
-//            )
-//            SearchBar() // Search bar, not functional atm but it's there
-//        }
-//    }
-//}

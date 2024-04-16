@@ -10,14 +10,14 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.pokeapp.PokeAppApplication
 import com.example.pokeapp.data.PokemonRepository
-import com.example.pokeapp.model.Pokemon
+import com.example.pokeapp.model.PokemonListModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-/* Main Screen UI State */
+
 sealed interface PokemonUiState {
-    data class Success(val pokemon: List<Pokemon>) : PokemonUiState
+    data class Success(val pokemon: PokemonListModel) : PokemonUiState
     object Error : PokemonUiState
     object Loading : PokemonUiState
 }

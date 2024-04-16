@@ -22,13 +22,8 @@ class DefaultAppContainer : AppContainer {
     private val retrofitService: ApiService by lazy {
         retrofit.create(ApiService::class.java)
     }
-//    private val retrofitService: PokeApiService by lazy {
-//        retrofit.create(PokeApiService::class.java)
-//    }
 
     override val pokemonRepository: PokemonRepository by lazy {
         NetworkPokemonRepository(retrofitService)
     }
-
-
 }

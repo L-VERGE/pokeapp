@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -31,42 +33,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.pokeapp.model.PokemonListModel
 import com.example.pokeapp.ui.MainDestinations
 import kotlin.random.Random
 
-
 @Composable
-fun MainScreen(
-    pokeUiState: PokemonUiState,
-    retryAction: () -> Unit,
-    modifier: Modifier = Modifier,
-    navController: NavHostController, // Take in navController to use when swapping screens
-    //viewModel: PokemonListViewModel
-) {
-    // Creating set of strings for testing purposes, each displays pokemon's name in info box
-    val my_elements: Set<String> = setOf("Bulbasaur","Ivysaur","Venusaur",
-        "Charmander","Charmeleon","Charizard",
-        "Squirtle","Wartortle","Blastoise",
-        "Caterpie","Metapod","Butterfree",
-        "Weedle","Kakuna","Beedrill",
-        "Pidgey","Pidgeotto","Pidgeot",
-        "Rattata","Raticate")
-
-    Column {// Column to divide page vertically
-        TopBox() // Create the top box as first section on the screen
-        LazyColumn( // Lazy column to create a scrollable list of elements
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .padding(vertical = 0.dp)
-        ) {
-            // Then create a 'PokemonListElement' for each thing in the testing set
-            items(my_elements.toList()) { element ->
-                PokemonListElement(
-                    text = element, // Passing in pokemon name
-                    navController = navController // Passing in navController to swap screens on info box click
-                )
-            }
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Text(text = "Loading...", modifier = Modifier.padding(16.dp))
+}
+@Composable
+fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Error fetching API data", modifier = Modifier.padding(16.dp))
+        Button(onClick = retryAction) {
+            Text("Retry")
         }
     }
 }
@@ -203,10 +187,53 @@ fun PokemonInfoTriangle( // Triangle connected to info box (completely aesthetic
         drawPath(path, backgroundColour)
     }
 }
-
-// Helper methods
-
 fun generateRandomColor(): Color { // Generate a random colour for testing purposes
     val random = Random.Default
     return Color(random.nextFloat(), random.nextFloat(), random.nextFloat())
+}
+
+
+
+@Composable
+fun PokemonViewScreen(
+    pokemonList: PokemonListModel,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+) {
+    Column {// Column to divide page vertically
+        TopBox() // Create the top box as first section on the screen
+        LazyColumn( // Lazy column to create a scrollable list of elements
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(vertical = 0.dp)
+        ) {
+            val pokemonNames = pokemonList.results.map {it.name}.toSet()
+
+            // Then create a 'PokemonListElement' for each thing in the testing set
+            items(pokemonNames.toList()) { element ->
+                PokemonListElement(
+                    text = element, // Passing in pokemon name
+                    navController = navController // Passing in navController to swap screens on info box click
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MainScreen(
+    pokeUiState: PokemonUiState,
+    retryAction: () -> Unit,
+    modifier: Modifier = Modifier,
+    navController: NavHostController, // Take in navController to use when swapping screens
+) {
+    when (pokeUiState) {
+        is PokemonUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+        is PokemonUiState.Success -> PokemonViewScreen(
+            pokemonList = pokeUiState.pokemon,
+            navController = navController
+        )
+        is PokemonUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
+    }
 }

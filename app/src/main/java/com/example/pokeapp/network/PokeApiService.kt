@@ -6,7 +6,7 @@ import retrofit2.http.Query
 
 interface ApiService {
     @GET("pokemon")
-    suspend fun getAllPokemon(@Query("limit") limit: Int = 9999): List<Pokemon>
+    suspend fun getAllPokemon(@Query("limit") limit: Int = 10): List<Pokemon>
 
 }
 

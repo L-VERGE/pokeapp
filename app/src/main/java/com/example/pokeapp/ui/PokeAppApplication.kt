@@ -7,6 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pokeapp.ui.screens.PokemonViewModel
 
+// # # # # #
+//  ui.PokeAppApplication.kt
+// # # # # #
 @Composable
 fun PokeApp() {
     Surface(

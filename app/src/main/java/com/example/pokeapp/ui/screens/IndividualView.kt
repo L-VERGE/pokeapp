@@ -15,20 +15,36 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.example.pokeapp.model.Pokemon
 
-// Simple placeholder for the individual view
+// # # # # #
+//  IndividualView.kt
+// # # # # #
+
 @Composable
 fun IndividualViewScreen(
+    selectedPokemon: Pokemon?, // Make pokemon nullable to handle potential absence of argument
+    viewModel: IndividualViewModel,
     pokeUiState: PokemonUiState,
-    retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController, // Take in navController to use when swapping screens
+
 ) {
+    val pokemon = navController.currentBackStackEntry?.arguments?.getParcelable<Pokemon>("selectedPokemon")
+
+    LaunchedEffect(pokemon) {
+        // When pokemon changes, fetch details if it's not null
+        if (pokemon != null) {
+            pokeUiState.getPokemonDetails(pokemon.name)
+        }
+    }
+
     Surface {
         IndividualViewHeading(
             navController = navController
@@ -41,6 +57,30 @@ fun IndividualViewScreen(
         }
     }
 }
+
+
+
+//// Simple placeholder for the individual view
+//@Composable
+//fun IndividualViewScreen(
+//    pokeUiState: PokemonUiState,
+//    pokemon: Pokemon,
+//    retryAction: () -> Unit,
+//    modifier: Modifier = Modifier,
+//    navController: NavHostController, // Take in navController to use when swapping screens
+//) {
+//    Surface {
+//        IndividualViewHeading(
+//            navController = navController
+//        )
+//        Button( // Makes a big button in the center of the screen
+//            onClick = { navController.popBackStack() }, // When button is clicked, goes back to main screen
+//            modifier = Modifier.padding(16.dp)
+//        ) {
+//            Text(text = "Back to Main Screen")
+//        }
+//    }
+//}
 @Composable
 fun IndividualViewHeading(
     navController: NavHostController

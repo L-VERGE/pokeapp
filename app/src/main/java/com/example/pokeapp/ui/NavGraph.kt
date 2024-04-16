@@ -8,7 +8,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.pokeapp.ui.screens.IndividualViewScreen
 import com.example.pokeapp.ui.screens.MainScreen
 import com.example.pokeapp.ui.screens.PokemonUiState
+import com.example.pokeapp.ui.screens.IndividualViewModel
 
+// # # # # #
+//  NavGraph.kt
+// # # # # #
 
 object MainDestinations { // Object to store different screens as properties
     const val MAIN_SCREEN = "main_screen"
@@ -33,7 +37,7 @@ fun PokeNavGraph(
             //pokeUiState, retryAction,
         }
         composable(MainDestinations.INDIVIDUAL_VIEW_SCREEN) {
-            IndividualViewScreen(pokeUiState, retryAction, navController = navController) // Navigate to the individual screen, storing which screen clicks should send you to
+            IndividualViewScreen(null, viewModel = IndividualViewModel(), navController = navController) // Navigate to the individual screen, storing which screen clicks should send you to
         }
     }
 }

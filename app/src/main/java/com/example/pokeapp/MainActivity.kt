@@ -10,6 +10,10 @@ import androidx.compose.ui.Modifier
 import com.example.pokeapp.ui.PokeApp
 import com.example.pokeapp.ui.theme.PokeappTheme
 
+// # # # # #
+//  MainActivity.kt
+// # # # # #
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

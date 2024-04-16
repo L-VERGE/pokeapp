@@ -26,19 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 
-//class MainActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContent {
-//            Surface(
-//                modifier = Modifier.fillMaxSize(),
-//                color = Color.Green // Background color green
-//            ) {
-//                PokemonEvolution()
-//            }
-//        }
-//    }
-//}
+// # # # # #
+//  EvoScreen.kt
+// # # # # #
 
 @Composable
 fun EvoScreen() {

@@ -10,14 +10,19 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.pokeapp.PokeAppApplication
 import com.example.pokeapp.data.PokemonRepository
+import com.example.pokeapp.model.Pokemon
 import com.example.pokeapp.model.PokemonListModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
+// # # # # #
+//  ViewModel.kt
+// # # # # #
 
 sealed interface PokemonUiState {
-    data class Success(val pokemon: PokemonListModel) : PokemonUiState
+    data class Success(val pokemonListModel: PokemonListModel) : PokemonUiState
+    //data class Success(val pokemon: List<Pokemon>) : PokemonUiState
     object Error : PokemonUiState
     object Loading : PokemonUiState
 }
@@ -28,6 +33,26 @@ class PokemonViewModel(
         private set
     init {
         getPokemon()
+    }
+//    fun getPokemon() {
+//        viewModelScope.launch {
+//            pokemonUiState = PokemonUiState.Loading
+//            val pokemonList = pokemonRepository.getAllPokemon()
+//            val pokemonUiStateSuccess = PokemonUiState.Success(
+//                pokemonList.results.map { fetchPokemonDetails(it.url) }
+//            )
+//
+//            pokemonUiState = try {
+//                pokemonUiStateSuccess
+//            } catch (e: IOException) {
+//                PokemonUiState.Error
+//            } catch (e: HttpException) {
+//                PokemonUiState.Error
+//            }
+//        }
+//    }
+    suspend fun getPokemonDetails(nameOrID: String): Pokemon {
+        return pokemonRepository.getPokemonDetails(nameOrID) // Use the updated getPokemonDetails function
     }
     fun getPokemon() {
         viewModelScope.launch {

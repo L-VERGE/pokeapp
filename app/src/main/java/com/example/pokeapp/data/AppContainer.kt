@@ -4,6 +4,10 @@ import kotlinx.serialization.json.Json
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+// # # # # #
+//  AppContainer.kt
+// # # # # #
+
 interface AppContainer {
     val pokemonRepository: PokemonRepository
 }

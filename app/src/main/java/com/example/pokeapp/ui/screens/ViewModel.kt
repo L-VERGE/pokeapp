@@ -44,13 +44,18 @@ class PokemonViewModel(
         }
     }
     // Same as in the PokemonRepository but accessible through view model
-    fun convertPokemonList(pokemonList: List<PokemonListItem>): List<Pokemon> {
+    fun convertPokemonList(pokemonList: List<PokemonListItem>, spriteMode: Boolean): List<Pokemon> {
         return pokemonList.map { pokemonListItem ->
             val id = extractIdFromUrl(pokemonListItem.url)
+            val spriteUrl = if (spriteMode) {
+                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"
+            } else {
+                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"
+            }
             Pokemon(
                 id = id,
                 name = pokemonListItem.name,
-                imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png",
+                imageUrl = spriteUrl,
                 infoUrl = pokemonListItem.url
             )
         }
@@ -70,4 +75,22 @@ class PokemonViewModel(
             }
         }
     }
+    fun getRegionName(id: Int): String {
+        return when (id) {
+            in 1..151 -> "Kanto"
+            in 152..251 -> "Johto"
+            in 252..386 -> "Hoenn"
+            in 387..493 -> "Sinnoh"
+            in 494..649 -> "Unova"
+            in 650..721 -> "Kalos"
+            in 722..809 -> "Alola"
+            in 810..905 -> "Galar"
+            in 906..1026 -> "Paldea"
+            else -> "Unknown Region"
+        }
+    }
+
+    // Example usage
+    // val id = 1
+    // val regionName = getRegionName(id)
 }

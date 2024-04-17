@@ -128,7 +128,7 @@ fun PokemonTypes(
     LazyRow(
         modifier = Modifier
         .padding(8.dp)
-        .fillMaxWidth(0.5f),
+        .fillMaxWidth(0.75f),
     ) {
         items(selectedPokemon.types) { type ->
             Box( // Wrap each item in a Box
@@ -145,17 +145,40 @@ fun PokemonTypes(
 fun PokemonTypeBox(
     type: String
 ) {
+    // Change colour of type box based on pokemon's type
+    val backgroundColor = when (type) {
+        "Fighting" -> Color(android.graphics.Color.parseColor("#CE4069"))
+        "Psychic" -> Color(android.graphics.Color.parseColor("#F97176"))
+        "Poison" -> Color(android.graphics.Color.parseColor("#AB6AC8"))
+        "Dragon" -> Color(android.graphics.Color.parseColor("#0A6DC4"))
+        "Ghost" -> Color(android.graphics.Color.parseColor("#0A6DC4"))
+        "Dark" -> Color(android.graphics.Color.parseColor("#5A5366"))
+        "Ground" -> Color(android.graphics.Color.parseColor("#D97746"))
+        "Fire" -> Color(android.graphics.Color.parseColor("#FF9C54"))
+        "Fairy" -> Color(android.graphics.Color.parseColor("#EC8FE6"))
+        "Water" -> Color(android.graphics.Color.parseColor("#4D90D5"))
+        "Flying" -> Color(android.graphics.Color.parseColor("#8FA8DD"))
+        "Normal" -> Color(android.graphics.Color.parseColor("#9099A1"))
+        "Rock" -> Color(android.graphics.Color.parseColor("#C7B78B"))
+        "Electric" -> Color(android.graphics.Color.parseColor("#F3D23B"))
+        "Bug" -> Color(android.graphics.Color.parseColor("#90C12C"))
+        "Grass" -> Color(android.graphics.Color.parseColor("#63BB5B"))
+        "Ice" -> Color(android.graphics.Color.parseColor("#74CEC0"))
+        "Steel" -> Color(android.graphics.Color.parseColor("#5A8EA1"))
+        else -> Color.Black.copy(alpha = 0.1f) // Default color
+    }
     Box(
         modifier = Modifier
-            .background(Color.Black.copy(alpha = 0.1f))
+            .background(backgroundColor)
             .padding(8.dp)
-            //.fillMaxWidth(0.7f)
+            .fillMaxWidth(0.5f)
             .clip(RoundedCornerShape(16.dp))
     ) {
         Text(
             text = type,
             modifier = Modifier
-                .align(alignment = Alignment.Center),
+                .align(alignment = Alignment.Center)
+                .padding(horizontal = 10.dp),
             color = Color.White,
             fontSize = 18.sp
         )

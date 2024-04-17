@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -122,6 +123,7 @@ fun TopBox(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
     searchQuery: String, // Receive current searchQuery state variable
@@ -147,7 +149,8 @@ fun SearchBar(
                 value = searchQuery,
                 onValueChange = onSearchQueryChange, // Call update function on change
                 placeholder = { Text("Search...") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth(),
             )
         }
     }
@@ -200,9 +203,11 @@ fun PokemonInfoBox( // Box that actually displays Pokemon info
             .fillMaxHeight()
             .background(backgroundColour)
             .clickable {
-                viewModel.setSelectedPokemonId(selectedPokemon.id)
+                viewModel.setSelectedPokemonId(selectedPokemon.id) // Updates selected pokemon
                 navController.navigate(
-                    route = MainDestinations.INDIVIDUAL_VIEW_SCREEN ) } // Swaps to individual view screen when clicked
+                    route = MainDestinations.INDIVIDUAL_VIEW_SCREEN
+                )
+            } // Swaps to individual view screen when clicked
     ){
         Row(
             modifier = Modifier

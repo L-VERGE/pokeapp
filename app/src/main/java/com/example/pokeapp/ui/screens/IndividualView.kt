@@ -1,6 +1,7 @@
 package com.example.pokeapp.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -113,7 +114,7 @@ fun IndividualViewHeading(
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             BackButton(navController = navController) // Pass in navController for navigation
-            PokemonImage(selectedPokemon = selectedPokemon) // Pass in selected pokemon to display info
+            PokemonImage(selectedPokemon = selectedPokemon, navController = navController) // Pass in selected pokemon to display info
             PokemonNameIdBox(selectedPokemon = selectedPokemon) // Pass in selected pokemon to display info
             PokemonTypes(selectedPokemon = selectedPokemon) // Pass in selected pokemon to display info
         }
@@ -186,7 +187,8 @@ fun BackButton(
 
 @Composable
 fun PokemonImage( // Display the selected pokemon's image, same method as on MainScreen
-    selectedPokemon: PokemonDetails
+    selectedPokemon: PokemonDetails,
+    navController: NavHostController
 ) {
     Row (
         modifier = Modifier
@@ -210,6 +212,9 @@ fun PokemonImage( // Display the selected pokemon's image, same method as on Mai
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
+                    .clickable {
+                        navController.navigate(
+                            route = MainDestinations.EVO_VIEW_SCREEN ) }
             )
         }
     }

@@ -11,15 +11,20 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.pokeapp.PokeAppApplication
 import com.example.pokeapp.data.PokemonRepository
 import com.example.pokeapp.model.Pokemon
+import com.example.pokeapp.model.PokemonDetails
 import com.example.pokeapp.model.PokemonListItem
 import com.example.pokeapp.model.PokemonListModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
 
 sealed interface PokemonUiState {
-    data class Success(val pokemon: PokemonListModel) : PokemonUiState
+    data class Success(
+        val pokemon: PokemonListModel = PokemonListModel()
+    ) : PokemonUiState
     object Error : PokemonUiState
     object Loading : PokemonUiState
 }
@@ -31,11 +36,20 @@ class PokemonViewModel(
     init {
         getPokemon()
     }
+    private val _selectedPokemonDetails = MutableStateFlow<PokemonDetails>(PokemonDetails())
+    val selectedPokemonDetails: StateFlow<PokemonDetails> = _selectedPokemonDetails
+
+    fun getPokemonDetails(pokemonId: Int) {
+        viewModelScope.launch {
+            val details = pokemonRepository.getPokemonDetails(pokemonId)
+            _selectedPokemonDetails.value = details
+        }
+    }
     fun getPokemon() {
         viewModelScope.launch {
             pokemonUiState = PokemonUiState.Loading
             pokemonUiState = try {
-                PokemonUiState.Success(pokemonRepository.getAllPokemon())
+                PokemonUiState.Success(pokemon = pokemonRepository.getAllPokemon())
             } catch (e: IOException) {
                 PokemonUiState.Error
             } catch (e: HttpException) {
@@ -43,6 +57,7 @@ class PokemonViewModel(
             }
         }
     }
+
     // Same as in the PokemonRepository but accessible through view model
     fun convertPokemonList(pokemonList: List<PokemonListItem>): List<Pokemon> {
         return pokemonList.map { pokemonListItem ->

@@ -1,5 +1,6 @@
 package com.example.pokeapp.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +23,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,18 +37,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.pokeapp.model.Pokemon
+import com.example.pokeapp.model.PokemonDetails
 import com.example.pokeapp.ui.MainDestinations
 
 // Screen to view individual details of a passed-in pokemon
 @Composable
 fun IndividualViewScreen(
-    selectedPokemon: Pokemon, // Receive pokemon object
-    viewModel: PokemonViewModel, // Receive viewmodel
+    //selectedPokemon: Pokemon, // Receive pokemon object
+    selectedPokemon: PokemonDetails,
+    retryAction: () -> Unit,
     navController: NavHostController, // Receive navController
     modifier: Modifier = Modifier
 ) {
-    val pokeUiState = viewModel.pokemonUiState // Create ui state with the view model
+    //val pokeUiState = viewModel.pokemonUiState // Create ui state with the view model
+
+    Log.i("TAG", "Inside view thing")
+    Log.i("TAG", selectedPokemon.name)
+    Log.i("TAG", selectedPokemon.id.toString())
     Surface { // Surface to fill the whole screen
         Column {// Column to divide page vertically
             IndividualViewHeading( // Composable at top of screen with back button, picture and name
@@ -64,7 +74,7 @@ fun IndividualViewScreen(
 }
 @Composable
 fun IndividualViewHeading(
-    selectedPokemon: Pokemon,
+    selectedPokemon: PokemonDetails,
     navController: NavHostController
 ) {
     Box( // Grey background box to contain everything
@@ -110,7 +120,7 @@ fun BackButton(
 
 @Composable
 fun PokemonImage( // Display the selected pokemon's image, same method as on MainScreen
-    selectedPokemon: Pokemon
+    selectedPokemon: PokemonDetails
 ) {
     Row (
         modifier = Modifier
@@ -141,7 +151,7 @@ fun PokemonImage( // Display the selected pokemon's image, same method as on Mai
 
 @Composable
 fun PokemonNameIdBox ( // Display selected pokemon's name, same method as on MainScreen
-    selectedPokemon: Pokemon
+    selectedPokemon: PokemonDetails
 ) {
     Box(
         modifier = Modifier
@@ -158,4 +168,29 @@ fun PokemonNameIdBox ( // Display selected pokemon's name, same method as on Mai
             fontSize = 24.sp
         )
     }
-} 
+}
+
+@Composable
+fun IndividualScreen(
+    //selectedPokemon: Pokemon, // Receive pokemon object
+    selectedPokemonId: Int = 1,
+    viewModel: PokemonViewModel, // Receive viewmodel
+    retryAction: () -> Unit,
+    navController: NavHostController, // Receive navController
+    modifier: Modifier = Modifier
+) {
+    when (val pokeUiState = viewModel.pokemonUiState) { // If uiState exists
+        is PokemonUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize()) // When loading display the loading screen
+        is PokemonUiState.Success -> {
+            val selectedPokemon by viewModel.selectedPokemonDetails.collectAsState(initial = PokemonDetails())
+
+            LaunchedEffect(key1 = selectedPokemonId) { // Re-collect on ID change
+                viewModel.getPokemonDetails(selectedPokemonId) // Fetch new data
+            }
+
+            // Use selectedPokemon properties for display
+            IndividualViewHeading(selectedPokemon = selectedPokemon, navController = navController)
+        }
+        is PokemonUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize()) // Otherwise show the error screen
+    }
+}

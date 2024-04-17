@@ -6,8 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.pokeapp.model.Pokemon
-import com.example.pokeapp.ui.screens.IndividualViewScreen
+import com.example.pokeapp.ui.screens.IndividualScreen
 import com.example.pokeapp.ui.screens.MainScreen
 import com.example.pokeapp.ui.screens.PokemonUiState
 import com.example.pokeapp.ui.screens.PokemonViewModel
@@ -36,9 +35,9 @@ fun PokeNavGraph(
             MainScreen(viewModel = viewModel, retryAction,navController = navController) // Navigate to the main screen, storing which screen clicks should send you to
         }
         composable(MainDestinations.INDIVIDUAL_VIEW_SCREEN) {
-            // Passing in dummy data to individual view screen for the time being
-            val selectedPokemon = Pokemon(9999, "MissingNo", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/MissingNo.svg/877px-MissingNo.svg.png", "na")
-            IndividualViewScreen(selectedPokemon = selectedPokemon, viewModel = viewModel, navController = navController)
+            // Passing in dummy data to individual view screen for the time being (when selected pokemon takes in pokemon object)
+            //val selectedPokemon = Pokemon(9999, "MissingNo", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/MissingNo.svg/877px-MissingNo.svg.png", "na")
+            IndividualScreen(selectedPokemonId = 2, viewModel = viewModel, retryAction = retryAction, navController = navController)
         }
     }
 }

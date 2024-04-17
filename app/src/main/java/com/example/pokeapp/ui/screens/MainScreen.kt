@@ -156,6 +156,7 @@ fun SearchBar(
 
 @Composable
 fun PokemonListElement( // Element inside scrolling list that contains Pokemon info
+    viewModel: PokemonViewModel,
     selectedPokemon: Pokemon,
     navController: NavHostController // Taking in navController to swap screens on info box click
 ) {
@@ -167,6 +168,7 @@ fun PokemonListElement( // Element inside scrolling list that contains Pokemon i
             .padding(vertical = 4.dp)
     ){
         PokemonInfoBox(
+            viewModel = viewModel,
             modifier = Modifier.weight(.9f),
             backgroundColour = backgroundColour,
             selectedPokemon = selectedPokemon,
@@ -181,6 +183,7 @@ fun PokemonListElement( // Element inside scrolling list that contains Pokemon i
 @Composable
 fun PokemonInfoBox( // Box that actually displays Pokemon info
     // Going to eventually split it up into more composables, but for now this works
+    viewModel: PokemonViewModel,
     modifier: Modifier = Modifier,
     backgroundColour: Color = Color.Gray, // Default bg colour for the box
     selectedPokemon: Pokemon, // Takes in a pokemon object
@@ -197,7 +200,9 @@ fun PokemonInfoBox( // Box that actually displays Pokemon info
             .fillMaxHeight()
             .background(backgroundColour)
             .clickable {
-                navController.navigate(MainDestinations.INDIVIDUAL_VIEW_SCREEN)} // Swaps to individual view screen when clicked
+                viewModel.setSelectedPokemonId(selectedPokemon.id)
+                navController.navigate(
+                    route = MainDestinations.INDIVIDUAL_VIEW_SCREEN ) } // Swaps to individual view screen when clicked
     ){
         Row(
             modifier = Modifier
@@ -276,6 +281,7 @@ fun generateRandomColor(): Color { // Generate a random colour for testing purpo
 
 @Composable
 fun PokemonViewScreen(
+    viewModel: PokemonViewModel,
     pokemonList: List<Pokemon>, // Receive list of Pokemon objects
     modifier: Modifier = Modifier,
     navController: NavHostController, // Receive navController for navigation
@@ -303,6 +309,7 @@ fun PokemonViewScreen(
             // Then create a PokemonListElement for each pokemon in the data
             items(filteredList) { pokemon ->
                 PokemonListElement(
+                    viewModel = viewModel,
                     selectedPokemon = pokemon, // Passing in pokemon name
                     navController = navController // Passing in navController to swap screens on info box click
                 )
@@ -325,6 +332,7 @@ fun MainScreen(
             val pokemonListItems = pokeUiState.pokemon.results
             val convertedPokemonList = viewModel.convertPokemonList(pokemonListItems)
             PokemonViewScreen(
+                viewModel = viewModel,
                 pokemonList = convertedPokemonList,
                 navController = navController,
             )

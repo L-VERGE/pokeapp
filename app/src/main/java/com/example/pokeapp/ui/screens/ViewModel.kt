@@ -1,5 +1,7 @@
 package com.example.pokeapp.ui.screens
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -21,31 +23,38 @@ import retrofit2.HttpException
 import java.io.IOException
 
 
-sealed interface PokemonUiState {
+sealed interface PokemonUiState { // Sealed state interface
     data class Success(
-        val pokemon: PokemonListModel = PokemonListModel()
+        val pokemon: PokemonListModel = PokemonListModel() // Stores the list of basic pokemon info
     ) : PokemonUiState
     object Error : PokemonUiState
     object Loading : PokemonUiState
 }
-class PokemonViewModel(
-    private val pokemonRepository: PokemonRepository
+class PokemonViewModel( // View model to store data
+    private val pokemonRepository: PokemonRepository // Create a repository instance to use data pull functions
 ) : ViewModel() {
-    var pokemonUiState: PokemonUiState by mutableStateOf(PokemonUiState.Loading)
+    var pokemonUiState: PokemonUiState by mutableStateOf(PokemonUiState.Loading) // Create an instance of the ui state to store in view model
         private set
     init {
-        getPokemon()
+        getPokemon() // Grab list of pokemon when ui state is initialized
     }
-    private val _selectedPokemonDetails = MutableStateFlow<PokemonDetails>(PokemonDetails())
+    private val _selectedPokemonId = mutableIntStateOf(-1) // Store the id of the currently selected pokemon
+    val selectedPokemonId: MutableIntState = _selectedPokemonId
+
+    fun setSelectedPokemonId(id: Int) { // Function to set the id
+        _selectedPokemonId.intValue = id
+    }
+
+    private val _selectedPokemonDetails = MutableStateFlow<PokemonDetails>(PokemonDetails()) // Store the currently selected pokemon's details
     val selectedPokemonDetails: StateFlow<PokemonDetails> = _selectedPokemonDetails
 
-    fun getPokemonDetails(pokemonId: Int) {
+    fun getPokemonDetails(pokemonId: Int) { // Update details object based on passed in id
         viewModelScope.launch {
-            val details = pokemonRepository.getPokemonDetails(pokemonId)
+            val details = pokemonRepository.getPokemonDetails(pokemonId) //Create new pokemon details object with info pulled from api
             _selectedPokemonDetails.value = details
         }
     }
-    fun getPokemon() {
+    fun getPokemon() { // Grab the pokemon
         viewModelScope.launch {
             pokemonUiState = PokemonUiState.Loading
             pokemonUiState = try {

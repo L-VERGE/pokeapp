@@ -1,6 +1,5 @@
 package com.example.pokeapp.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,17 +42,11 @@ import com.example.pokeapp.ui.MainDestinations
 // Screen to view individual details of a passed-in pokemon
 @Composable
 fun IndividualViewScreen(
-    //selectedPokemon: Pokemon, // Receive pokemon object
     selectedPokemon: PokemonDetails,
     retryAction: () -> Unit,
     navController: NavHostController, // Receive navController
     modifier: Modifier = Modifier
 ) {
-    //val pokeUiState = viewModel.pokemonUiState // Create ui state with the view model
-
-    Log.i("TAG", "Inside view thing")
-    Log.i("TAG", selectedPokemon.name)
-    Log.i("TAG", selectedPokemon.id.toString())
     Surface { // Surface to fill the whole screen
         Column {// Column to divide page vertically
             IndividualViewHeading( // Composable at top of screen with back button, picture and name
@@ -172,8 +165,7 @@ fun PokemonNameIdBox ( // Display selected pokemon's name, same method as on Mai
 
 @Composable
 fun IndividualScreen(
-    //selectedPokemon: Pokemon, // Receive pokemon object
-    selectedPokemonId: Int = 1,
+    selectedPokemonId: Int = 1, // Receive pokemon id to fetch data with
     viewModel: PokemonViewModel, // Receive viewmodel
     retryAction: () -> Unit,
     navController: NavHostController, // Receive navController
@@ -189,7 +181,7 @@ fun IndividualScreen(
             }
 
             // Use selectedPokemon properties for display
-            IndividualViewHeading(selectedPokemon = selectedPokemon, navController = navController)
+            IndividualViewScreen(selectedPokemon = selectedPokemon, retryAction = retryAction, navController = navController)
         }
         is PokemonUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize()) // Otherwise show the error screen
     }

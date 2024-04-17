@@ -15,6 +15,7 @@ import com.example.pokeapp.ui.screens.PokemonViewModel
 object MainDestinations { // Object to store different destination screens
     const val MAIN_SCREEN = "main_screen"
     const val INDIVIDUAL_VIEW_SCREEN = "individual_view_screen"
+    const val ARG_POKEMON_ID = "pokemonId"
 }
 
 // NavGraph exists to let us jump between different screens in the app
@@ -35,9 +36,8 @@ fun PokeNavGraph(
             MainScreen(viewModel = viewModel, retryAction,navController = navController) // Navigate to the main screen, storing which screen clicks should send you to
         }
         composable(MainDestinations.INDIVIDUAL_VIEW_SCREEN) {
-            // Passing in dummy data to individual view screen for the time being (when selected pokemon takes in pokemon object)
-            //val selectedPokemon = Pokemon(9999, "MissingNo", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/MissingNo.svg/877px-MissingNo.svg.png", "na")
-            IndividualScreen(selectedPokemonId = 2, viewModel = viewModel, retryAction = retryAction, navController = navController)
+            val selectedPokemonId = viewModel.selectedPokemonId.intValue // Grabs currently selected pokemon id from view model to fetch details for
+            IndividualScreen(selectedPokemonId = selectedPokemonId, viewModel = viewModel, retryAction = retryAction, navController = navController)
         }
     }
 }

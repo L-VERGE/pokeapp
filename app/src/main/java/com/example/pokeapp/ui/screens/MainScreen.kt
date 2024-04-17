@@ -32,6 +32,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,7 +52,19 @@ import kotlin.random.Random
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
-    Text(text = "Loading...", modifier = Modifier.padding(16.dp))
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Loading . . .",
+            modifier = Modifier
+                .padding(16.dp),
+            color = Color(android.graphics.Color.parseColor("#C2C2C2")),
+            fontSize = 30.sp
+        )
+    }
 }
 @Composable
 fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
@@ -67,7 +81,10 @@ fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun TopBox() { // Box in the top section of the screen that includes search and menu
+fun TopBox(
+    searchQuery: String, // Receive searchQuery state variable
+    onSearchQueryChange: (String) -> Unit, // Receive onSearchQueryChange function
+) { // Box in the top section of the screen that includes search and menu
     Box( // Grey background box to contain everything
         modifier = Modifier
             .fillMaxWidth()
@@ -95,13 +112,19 @@ fun TopBox() { // Box in the top section of the screen that includes search and 
                 modifier = Modifier
                     .width(32.dp)
             )
-            SearchBar() // Search bar, not functional atm but it's there
+            SearchBar(
+                searchQuery = searchQuery, // Pass current searchQuery
+                onSearchQueryChange = onSearchQueryChange // Pass update function
+            )
         }
     }
 }
 
 @Composable
-fun SearchBar() { // The search bar to let users search specific pokemon
+fun SearchBar(
+    searchQuery: String, // Receive current searchQuery state variable
+    onSearchQueryChange: (String) -> Unit, // Receive update function
+) { // The search bar to let users search specific pokemon
     Box( // Keep everything in a rounded white box to look fancy
         modifier = Modifier
             .height(48.dp)
@@ -119,8 +142,8 @@ fun SearchBar() { // The search bar to let users search specific pokemon
                 modifier = Modifier.padding(end = 8.dp)
             )
             TextField( // Search input
-                value = "",
-                onValueChange = { },
+                value = searchQuery,
+                onValueChange = onSearchQueryChange, // Call update function on change
                 placeholder = { Text("Search...") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -246,24 +269,39 @@ fun generateRandomColor(): Color { // Generate a random colour for testing purpo
     return Color(random.nextFloat(), random.nextFloat(), random.nextFloat())
 }
 
-
-
 @Composable
 fun PokemonViewScreen(
     pokemonList: List<Pokemon>,
     modifier: Modifier = Modifier,
     navController: NavHostController,
+//    searchQuery: String,
+//    onSearchQueryChange: (String) -> Unit = { newQuery ->  // Default implementation
+//        searchQuery = newQuery// Update searchQuery here (optional)
+//    }, // Update function for search query
 ) {
+    val searchQuery = remember { mutableStateOf("") } // State for search query
+
+    val onSearchQueryChange: (String) -> Unit = { newQuery ->
+        searchQuery.value = newQuery // Update state with new query
+    }
+
     Column {// Column to divide page vertically
-        TopBox() // Create the top box as first section on the screen
+        TopBox(
+            searchQuery = searchQuery.value, // Pass current searchQuery
+            onSearchQueryChange = onSearchQueryChange // Pass update function
+        ) // Create the top box as first section on the screen
         LazyColumn( // Lazy column to create a scrollable list of elements
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .padding(vertical = 0.dp)
         ) {
+            val filteredList = pokemonList.filter { pokemon ->
+                // Filter based on pokemon name (you can adjust this logic)
+                pokemon.name.lowercase().contains(searchQuery.value.lowercase())
+            }
             // Then create a 'PokemonListElement' for each thing in the testing set
-            items(pokemonList) { pokemon ->
+            items(filteredList) { pokemon ->
                 PokemonListElement(
                     selectedPokemon = pokemon, // Passing in pokemon name
                     navController = navController // Passing in navController to swap screens on info box click
@@ -283,11 +321,12 @@ fun MainScreen(
     when (val pokeUiState = viewModel.pokemonUiState) {
         is PokemonUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is PokemonUiState.Success -> {
+
             val pokemonListItems = pokeUiState.pokemon.results
             val convertedPokemonList = viewModel.convertPokemonList(pokemonListItems)
             PokemonViewScreen(
                 pokemonList = convertedPokemonList,
-                navController = navController
+                navController = navController,
             )
         }
         is PokemonUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())

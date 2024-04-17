@@ -16,11 +16,16 @@ class NetworkPokemonRepository( // Create class based on the interface
 
     override suspend fun convertPokemonList(pokemonList: List<PokemonListItem>): List<Pokemon> { // Overrides the interface's version
         return pokemonList.map { pokemonListItem -> // Uses map to go through each PokemonListItem object stored in PokemonListModel.results
-            val id = extractIdFromUrl(pokemonListItem.url) // Uses helper function to pull id from the info url
-            Pokemon( // Creates a new Pokemon object
+            val id = extractIdFromUrl(pokemonListItem.url)
+            val spriteUrl = if (spriteMode) {
+                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"
+            } else {
+                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"
+            }
+            Pokemon(
                 id = id,
                 name = pokemonListItem.name,
-                imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png", // All images are stored at this link with respective pokemon IDs
+                imageUrl = spriteUrl,
                 infoUrl = pokemonListItem.url
             )
         } // Returns list of Pokemon objects

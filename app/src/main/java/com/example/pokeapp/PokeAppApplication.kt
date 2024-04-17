@@ -8,6 +8,7 @@ class PokeAppApplication : Application() {
     lateinit var container: AppContainer
     override fun onCreate() {
         super.onCreate()
+        // Creates the app container when app starts
         container = DefaultAppContainer()
     }
 }

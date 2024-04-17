@@ -12,6 +12,7 @@ fun PokeApp() {
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
+        // Makes a view model and passess it into the nav graph
         val pokeViewModel: PokemonViewModel =
             viewModel(factory = PokemonViewModel.Factory)
         PokeNavGraph(

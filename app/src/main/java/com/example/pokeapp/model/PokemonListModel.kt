@@ -5,15 +5,15 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class PokemonListModel(
-    val count: Int,
-    val next: String?,
-    val previous: String?,
-    val results: List<PokemonListItem>
+data class PokemonListModel( // All data pulled from https://pokeapi.co/api/v2/pokemon/
+    val count: Int, // No. of pokemon returned
+    val next: String?, // Link to next set of pokemon based on query limit
+    val previous: String?, // Link to last set of pokemon based on query limit
+    val results: List<PokemonListItem> // All pokemon in API (names, data urls)
 ) : Parcelable
 
 @Parcelize
 data class PokemonListItem(
-    @SerializedName("name") val name: String,
-    @SerializedName("url") val url: String
+    @SerializedName("name") val name: String, // Pokemon's name in all lowercase
+    @SerializedName("url") val url: String // Api link to pull pokemon's data: "https://pokeapi.co/api/v2/pokemon/${idOrName}/"
 ): Parcelable

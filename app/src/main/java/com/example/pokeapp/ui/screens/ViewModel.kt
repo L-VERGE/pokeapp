@@ -43,6 +43,7 @@ class PokemonViewModel(
             }
         }
     }
+    // Same as in the PokemonRepository but accessible through view model
     fun convertPokemonList(pokemonList: List<PokemonListItem>): List<Pokemon> {
         return pokemonList.map { pokemonListItem ->
             val id = extractIdFromUrl(pokemonListItem.url)
@@ -55,7 +56,7 @@ class PokemonViewModel(
         }
     }
 
-    // Function to extract the id from the pokemonListItem url
+    // Same as in the PokemonRepository but accessible through view model
     fun extractIdFromUrl(url: String): Int {
         val segments = url.split("/")
         return segments[segments.lastIndex - 1].toInt()

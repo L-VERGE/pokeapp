@@ -20,9 +20,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    PokeApp()
-                    //PokeNavGraph() // Uses NavGraph in order to start on MainScreen and jump between screens on box click
-                    //EvoScreen() // Start in evo screen for testing
+                    PokeApp() // Runs the app
                 }
             }
         }

@@ -99,7 +99,9 @@ fun TopBox(
             horizontalArrangement = Arrangement.SpaceBetween,
         ){
             // First the hamburger menu, button so it's clickable
-            IconButton(onClick = { /* Handle hamburger menu click */ }) {
+            IconButton(onClick = {
+                // Doesn't do anything atm, we'll figure out something eventually
+            }) {
                 Icon( // Icon for the menu
                     imageVector = Icons.Default.Menu,
                     tint = Color(android.graphics.Color.parseColor("#FFFFFF")),
@@ -165,22 +167,23 @@ fun PokemonListElement( // Element inside scrolling list that contains Pokemon i
             .padding(vertical = 4.dp)
     ){
         PokemonInfoBox(
-            modifier = Modifier.weight(.8f),
+            modifier = Modifier.weight(.9f),
             backgroundColour = backgroundColour,
             selectedPokemon = selectedPokemon,
             navController = navController // Passing in navController to swap screens on info box click
         )
         PokemonInfoTriangle(
-            modifier = Modifier.weight(.2f),
+            modifier = Modifier.weight(.1f),
             backgroundColour = backgroundColour
             )
     }
 }
 @Composable
 fun PokemonInfoBox( // Box that actually displays Pokemon info
+    // Going to eventually split it up into more composables, but for now this works
     modifier: Modifier = Modifier,
-    backgroundColour: Color = Color.Gray,
-    selectedPokemon: Pokemon,
+    backgroundColour: Color = Color.Gray, // Default bg colour for the box
+    selectedPokemon: Pokemon, // Takes in a pokemon object
     navController: NavHostController // Taking in navController to swap screens on info box click
 ) {
     // This box should:
@@ -193,7 +196,8 @@ fun PokemonInfoBox( // Box that actually displays Pokemon info
         modifier = modifier
             .fillMaxHeight()
             .background(backgroundColour)
-            .clickable { navController.navigate(MainDestinations.INDIVIDUAL_VIEW_SCREEN) } // Swaps to individual view screen when clicked
+            .clickable {
+                navController.navigate(MainDestinations.INDIVIDUAL_VIEW_SCREEN)} // Swaps to individual view screen when clicked
     ){
         Row(
             modifier = Modifier
@@ -202,9 +206,9 @@ fun PokemonInfoBox( // Box that actually displays Pokemon info
                 .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Card(
+            Card( // Card holds pokemon's artwork
                 modifier = modifier
-                    .aspectRatio(1f)
+                    .aspectRatio(1.2f)
                     .fillMaxWidth(0.5f)
                     .clip(CircleShape),
                 shape = MaterialTheme.shapes.small,
@@ -212,33 +216,32 @@ fun PokemonInfoBox( // Box that actually displays Pokemon info
                     containerColor = Color(0xDFFFFFFF), // Set semi-transparent background color
                 )
             ) {
-                AsyncImage(
+                AsyncImage( // Async image to allow async loading
                     model = ImageRequest.Builder(context = LocalContext.current).data(selectedPokemon.imageUrl)
                         .crossfade(true).build(),
                     contentDescription = selectedPokemon.name.capitalize(),
-                    contentScale = ContentScale.Fit,
+                    contentScale = ContentScale.FillHeight,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            Column(
+            Column( // Column will be used to stack types under name eventually
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(
+                Box( // The transparent box behind the pokemon's name
                     modifier = Modifier
                         .background(Color.Black.copy(alpha = 0.15f))
                         .padding(10.dp)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
                 ) {
-                    Text(
-                        text = selectedPokemon.name.capitalize(),
+                    Text( // Combine the id (dex no.) and name to display on the info box
+                        text = "#"+ selectedPokemon.id + " " + selectedPokemon.name.capitalize(),
                         modifier = Modifier
                             .align(alignment = Alignment.Center),
-                        color = Color.White,
-                        fontSize = 18.sp
+                        color = Color.White
                     )
                 }
             }
@@ -247,6 +250,7 @@ fun PokemonInfoBox( // Box that actually displays Pokemon info
 }
 @Composable
 fun PokemonInfoTriangle( // Triangle connected to info box (completely aesthetic)
+    // The fun little slanted part on the left side of each pokemon box
     modifier: Modifier = Modifier,
     backgroundColour: Color = Color.Gray
 ) {
@@ -267,20 +271,16 @@ fun PokemonInfoTriangle( // Triangle connected to info box (completely aesthetic
 fun generateRandomColor(): Color { // Generate a random colour for testing purposes
     val random = Random.Default
     return Color(random.nextFloat(), random.nextFloat(), random.nextFloat())
+    // Eventually, box colours will be decided based on pokemon type
 }
 
 @Composable
 fun PokemonViewScreen(
-    pokemonList: List<Pokemon>,
+    pokemonList: List<Pokemon>, // Receive list of Pokemon objects
     modifier: Modifier = Modifier,
-    navController: NavHostController,
-//    searchQuery: String,
-//    onSearchQueryChange: (String) -> Unit = { newQuery ->  // Default implementation
-//        searchQuery = newQuery// Update searchQuery here (optional)
-//    }, // Update function for search query
+    navController: NavHostController, // Receive navController for navigation
 ) {
     val searchQuery = remember { mutableStateOf("") } // State for search query
-
     val onSearchQueryChange: (String) -> Unit = { newQuery ->
         searchQuery.value = newQuery // Update state with new query
     }
@@ -296,11 +296,11 @@ fun PokemonViewScreen(
                 .fillMaxHeight()
                 .padding(vertical = 0.dp)
         ) {
-            val filteredList = pokemonList.filter { pokemon ->
-                // Filter based on pokemon name (you can adjust this logic)
-                pokemon.name.lowercase().contains(searchQuery.value.lowercase())
+            val filteredList = pokemonList.filter { pokemon -> // Filter pokemon based on pokemon name & id (dex no.)
+                val pokemonIdName = pokemon.name + pokemon.id // Done by combining id and name into 1 string
+                pokemonIdName.lowercase().contains(searchQuery.value.lowercase())// Then check if whatever searched, be it name or id is in the string
             }
-            // Then create a 'PokemonListElement' for each thing in the testing set
+            // Then create a PokemonListElement for each pokemon in the data
             items(filteredList) { pokemon ->
                 PokemonListElement(
                     selectedPokemon = pokemon, // Passing in pokemon name
@@ -313,15 +313,15 @@ fun PokemonViewScreen(
 
 @Composable
 fun MainScreen(
-    viewModel: PokemonViewModel,
-    retryAction: () -> Unit,
+    viewModel: PokemonViewModel, // Recieves view model
+    retryAction: () -> Unit, // Recieves retry action to re-attempt data fetch if unsuccessful
     modifier: Modifier = Modifier,
     navController: NavHostController, // Take in navController to use when swapping screens
 ) {
-    when (val pokeUiState = viewModel.pokemonUiState) {
-        is PokemonUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+    when (val pokeUiState = viewModel.pokemonUiState) { // If uiState exists
+        is PokemonUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize()) // When loading display the loading screen
         is PokemonUiState.Success -> {
-
+            // If getting data succeeds, convert data to Pokemon objects and display the proper screen
             val pokemonListItems = pokeUiState.pokemon.results
             val convertedPokemonList = viewModel.convertPokemonList(pokemonListItems)
             PokemonViewScreen(
@@ -329,6 +329,6 @@ fun MainScreen(
                 navController = navController,
             )
         }
-        is PokemonUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
+        is PokemonUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize()) // Otherwise show the error screen
     }
 }

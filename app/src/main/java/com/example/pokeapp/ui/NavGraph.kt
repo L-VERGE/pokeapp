@@ -2,12 +2,14 @@ package com.example.pokeapp.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.pokeapp.ui.screens.IndividualViewScreen
 import com.example.pokeapp.ui.screens.MainScreen
 import com.example.pokeapp.ui.screens.PokemonUiState
+import com.example.pokeapp.ui.screens.PokemonViewModel
 
 
 object MainDestinations { // Object to store different screens as properties
@@ -23,13 +25,14 @@ fun PokeNavGraph(
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
+    val viewModel: PokemonViewModel = viewModel(factory = PokemonViewModel.Factory)
 
     NavHost(
         navController,
         startDestination = MainDestinations.MAIN_SCREEN // Tells NavGraph to start on main screen
     ) {
         composable(MainDestinations.MAIN_SCREEN) {
-            MainScreen(pokeUiState, retryAction,navController = navController) // Navigate to the main screen, storing which screen clicks should send you to
+            MainScreen(viewModel = viewModel, retryAction,navController = navController) // Navigate to the main screen, storing which screen clicks should send you to
             //pokeUiState, retryAction,
         }
         composable(MainDestinations.INDIVIDUAL_VIEW_SCREEN) {

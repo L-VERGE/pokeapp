@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,23 +18,33 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.pokeapp.model.PokemonListModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.example.pokeapp.model.Pokemon
 import com.example.pokeapp.ui.MainDestinations
 import kotlin.random.Random
 
@@ -120,7 +131,7 @@ fun SearchBar() { // The search bar to let users search specific pokemon
 
 @Composable
 fun PokemonListElement( // Element inside scrolling list that contains Pokemon info
-    text: String,
+    selectedPokemon: Pokemon,
     navController: NavHostController // Taking in navController to swap screens on info box click
 ) {
     val backgroundColour = generateRandomColor() // Random background colour for testing
@@ -133,7 +144,7 @@ fun PokemonListElement( // Element inside scrolling list that contains Pokemon i
         PokemonInfoBox(
             modifier = Modifier.weight(.8f),
             backgroundColour = backgroundColour,
-            text = text,
+            selectedPokemon = selectedPokemon,
             navController = navController // Passing in navController to swap screens on info box click
         )
         PokemonInfoTriangle(
@@ -146,7 +157,7 @@ fun PokemonListElement( // Element inside scrolling list that contains Pokemon i
 fun PokemonInfoBox( // Box that actually displays Pokemon info
     modifier: Modifier = Modifier,
     backgroundColour: Color = Color.Gray,
-    text: String = "",
+    selectedPokemon: Pokemon,
     navController: NavHostController // Taking in navController to swap screens on info box click
 ) {
     // This box should:
@@ -161,11 +172,54 @@ fun PokemonInfoBox( // Box that actually displays Pokemon info
             .background(backgroundColour)
             .clickable { navController.navigate(MainDestinations.INDIVIDUAL_VIEW_SCREEN) } // Swaps to individual view screen when clicked
     ){
-        Text(
-            text = text,
+        Row(
             modifier = Modifier
-                .align(Alignment.Center)
-        )
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Card(
+                modifier = modifier
+                    .aspectRatio(1f)
+                    .fillMaxWidth(0.5f)
+                    .clip(CircleShape),
+                shape = MaterialTheme.shapes.small,
+                colors = CardDefaults.cardColors( // Customize card colors
+                    containerColor = Color(0xDFFFFFFF), // Set semi-transparent background color
+                )
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current).data(selectedPokemon.imageUrl)
+                        .crossfade(true).build(),
+                    contentDescription = selectedPokemon.name.capitalize(),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(Color.Black.copy(alpha = 0.15f))
+                        .padding(10.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                ) {
+                    Text(
+                        text = selectedPokemon.name.capitalize(),
+                        modifier = Modifier
+                            .align(alignment = Alignment.Center),
+                        color = Color.White,
+                        fontSize = 18.sp
+                    )
+                }
+            }
+        }
     }
 }
 @Composable
@@ -196,7 +250,7 @@ fun generateRandomColor(): Color { // Generate a random colour for testing purpo
 
 @Composable
 fun PokemonViewScreen(
-    pokemonList: PokemonListModel,
+    pokemonList: List<Pokemon>,
     modifier: Modifier = Modifier,
     navController: NavHostController,
 ) {
@@ -208,12 +262,10 @@ fun PokemonViewScreen(
                 .fillMaxHeight()
                 .padding(vertical = 0.dp)
         ) {
-            val pokemonNames = pokemonList.results.map {it.name}.toSet()
-
             // Then create a 'PokemonListElement' for each thing in the testing set
-            items(pokemonNames.toList()) { element ->
+            items(pokemonList) { pokemon ->
                 PokemonListElement(
-                    text = element, // Passing in pokemon name
+                    selectedPokemon = pokemon, // Passing in pokemon name
                     navController = navController // Passing in navController to swap screens on info box click
                 )
             }
@@ -223,17 +275,21 @@ fun PokemonViewScreen(
 
 @Composable
 fun MainScreen(
-    pokeUiState: PokemonUiState,
+    viewModel: PokemonViewModel,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController, // Take in navController to use when swapping screens
 ) {
-    when (pokeUiState) {
+    when (val pokeUiState = viewModel.pokemonUiState) {
         is PokemonUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
-        is PokemonUiState.Success -> PokemonViewScreen(
-            pokemonList = pokeUiState.pokemon,
-            navController = navController
-        )
+        is PokemonUiState.Success -> {
+            val pokemonListItems = pokeUiState.pokemon.results
+            val convertedPokemonList = viewModel.convertPokemonList(pokemonListItems)
+            PokemonViewScreen(
+                pokemonList = convertedPokemonList,
+                navController = navController
+            )
+        }
         is PokemonUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
     }
 }

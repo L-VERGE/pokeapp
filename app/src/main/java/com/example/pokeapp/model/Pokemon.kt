@@ -15,5 +15,8 @@ data class Pokemon(
 data class PokemonDetails(
     val id: Int = 9999,
     val name: String = "MissingNo.",
-    val imageUrl: String = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/MissingNo.svg/877px-MissingNo.svg.png"
+    val abilities: List<Ability> = listOf(Ability()),
+    val sprites: Sprites = Sprites(),
+    val types: List<Type> = listOf(Type()),
+
 )

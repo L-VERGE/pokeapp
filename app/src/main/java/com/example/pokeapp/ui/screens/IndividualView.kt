@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -53,18 +55,49 @@ fun IndividualViewScreen(
                 selectedPokemon = selectedPokemon, // Passing in selected pokemon to display info
                 navController = navController // Passing in navController for back button navigation
             )
-            Box( // Box in lower half of screen to display info, will likely change to lazy column sometime
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-                    .padding(10.dp)
-                    .align(Alignment.CenterHorizontally)
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(vertical = 8.dp)
             ) {
-                Text(text = "Pokemon info . . .")
+                PokemonAbilities(selectedPokemon = selectedPokemon)
+            }
+            
+        }
+    }
+}
+@Composable
+fun PokemonAbilities(
+    selectedPokemon: PokemonDetails
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+       Box(
+           modifier = Modifier
+               .fillMaxWidth()
+               .background(Color(android.graphics.Color.parseColor("#C2C2C2")))
+       ) {
+           Text(
+               text = "Abilities",
+               modifier = Modifier
+                   .padding(8.dp),
+               color = Color(android.graphics.Color.parseColor("#FFFFFF")),
+               fontSize = 20.sp
+           )
+       }
+        LazyRow(modifier = Modifier) {
+            items(selectedPokemon.abilities) { ability ->
+                Text(
+                    text = ability.ability.name.capitalize(),
+                    modifier = Modifier. padding(10.dp)
+                )
             }
         }
     }
 }
+
 @Composable
 fun IndividualViewHeading(
     selectedPokemon: PokemonDetails,
@@ -82,8 +115,49 @@ fun IndividualViewHeading(
             BackButton(navController = navController) // Pass in navController for navigation
             PokemonImage(selectedPokemon = selectedPokemon) // Pass in selected pokemon to display info
             PokemonNameIdBox(selectedPokemon = selectedPokemon) // Pass in selected pokemon to display info
+            PokemonTypes(selectedPokemon = selectedPokemon) // Pass in selected pokemon to display info
         }
 
+    }
+}
+@Composable
+fun PokemonTypes(
+    selectedPokemon: PokemonDetails
+) {
+    LazyRow(
+        modifier = Modifier
+        .padding(8.dp)
+        .fillMaxWidth(0.5f),
+    ) {
+        items(selectedPokemon.types) { type ->
+            Box( // Wrap each item in a Box
+                modifier = Modifier
+                    .padding(10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                PokemonTypeBox(type = type.type.name.capitalize())
+            }
+        }
+    }
+}
+@Composable
+fun PokemonTypeBox(
+    type: String
+) {
+    Box(
+        modifier = Modifier
+            .background(Color.Black.copy(alpha = 0.1f))
+            .padding(8.dp)
+            //.fillMaxWidth(0.7f)
+            .clip(RoundedCornerShape(16.dp))
+    ) {
+        Text(
+            text = type,
+            modifier = Modifier
+                .align(alignment = Alignment.Center),
+            color = Color.White,
+            fontSize = 18.sp
+        )
     }
 }
 
@@ -94,8 +168,7 @@ fun BackButton(
     Row( // Row used to shift button to left side of screen
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.2f)
-            .padding(10.dp),
+            .fillMaxHeight(0.2f),
         horizontalArrangement = Arrangement.SpaceBetween,
     ){
         // Back Button
@@ -117,7 +190,7 @@ fun PokemonImage( // Display the selected pokemon's image, same method as on Mai
 ) {
     Row (
         modifier = Modifier
-            .fillMaxHeight(0.7f)
+            .fillMaxHeight(0.6f)
     ){
         Card(
             modifier = Modifier
@@ -130,7 +203,7 @@ fun PokemonImage( // Display the selected pokemon's image, same method as on Mai
             )
         ) {
             AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current).data(selectedPokemon.imageUrl)
+                model = ImageRequest.Builder(context = LocalContext.current).data(selectedPokemon.sprites.other.official_artwork.front_default)
                     .crossfade(true).build(),
                 contentDescription = selectedPokemon.name.capitalize(),
                 contentScale = ContentScale.Fit,
@@ -149,8 +222,9 @@ fun PokemonNameIdBox ( // Display selected pokemon's name, same method as on Mai
     Box(
         modifier = Modifier
             .background(Color.Black.copy(alpha = 0.15f))
-            .padding(10.dp)
+            .padding(4.dp)
             .fillMaxWidth(0.7f)
+            .fillMaxHeight(0.25f)
             .clip(RoundedCornerShape(16.dp))
     ) {
         Text(
